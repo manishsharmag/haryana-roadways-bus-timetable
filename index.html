@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Haryana Bus Info — Bus Timetable, Routes & Live Tracking</title>
+  <meta name="description" content="Find Haryana Roadways bus timings, routes, and schedules. Search bus timetable between any two cities in Haryana. Free, fast, and updated regularly." />
+  <meta name="keywords" content="Haryana bus timetable, Haryana Roadways schedule, bus timing Haryana, HRTC bus routes, Haryana bus routes" />
+  <link rel="canonical" href="https://haryanabusinfo.pages.dev/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0b1e3d;
+      --navy2: #132952;
+      --orange: #f97316;
+      --orange2: #fb923c;
+      --gold: #fbbf24;
+      --cream: #fef9f0;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--navy);
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .nav-logo {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--white);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .nav-logo span { color: var(--orange); }
+    .nav-links { display: flex; gap: 0.25rem; }
+    .nav-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--white);
+      background: rgba(255,255,255,0.12);
+    }
+    .nav-links a.active { color: var(--orange); }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, #1a3a6e 100%);
+      padding: 3.5rem 1.25rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -40px;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(249,115,22,0.2);
+      border: 1px solid rgba(249,115,22,0.4);
+      color: var(--orange2);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.3rem 0.85rem;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-family: 'Baloo 2', cursive;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 span { color: var(--orange); }
+    .hero p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* SEARCH CARD */
+    .search-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 1.5rem;
+      max-width: 520px;
+      margin: 0 auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      position: relative;
+      z-index: 2;
+    }
+    .search-card h2 {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .field-group { position: relative; margin-bottom: 0.75rem; }
+    .field-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.35rem;
+      display: block;
+    }
+    .field-group input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: 'Noto Sans', sans-serif;
+      color: var(--text);
+      background: #f8fafc;
+      transition: border 0.2s;
+      outline: none;
+    }
+    .field-group input:focus { border-color: var(--orange); background: var(--white); }
+    .field-icon {
+      position: absolute;
+      left: 0.85rem;
+      bottom: 0.85rem;
+      font-size: 1rem;
+    }
+    .swap-btn {
+      width: 36px; height: 36px;
+      background: var(--orange);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0.25rem auto;
+      transition: transform 0.3s, background 0.2s;
+    }
+    .swap-btn:hover { background: #ea6c08; transform: rotate(180deg); }
+
+    /* AUTOCOMPLETE */
+    .autocomplete-list {
+      position: absolute;
+      top: 100%; left: 0; right: 0;
+      background: var(--white);
+      border: 2px solid var(--orange);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 50;
+      display: none;
+    }
+    .autocomplete-list.open { display: block; }
+    .autocomplete-item {
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .autocomplete-item:hover { background: #fff7ed; color: var(--orange); }
+
+    .search-btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, var(--orange), #ea6c08);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Baloo 2', cursive;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 14px rgba(249,115,22,0.4);
+      letter-spacing: 0.02em;
+    }
+    .search-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(249,115,22,0.5); }
+    .search-btn:active { transform: translateY(0); }
+
+    /* STATS BAR */
+    .stats-bar {
+      background: var(--navy);
+      padding: 1.25rem;
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--orange);
+    }
+    .stat-label { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 0.1rem; }
+
+    /* POPULAR ROUTES */
+    .section { padding: 2.5rem 1.25rem; }
+    .section-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 0.3rem;
+    }
+    .section-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+
+    .routes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .route-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      text-decoration: none;
+      display: block;
+      transition: all 0.2s;
+    }
+    .route-card:hover {
+      border-color: var(--orange);
+      box-shadow: 0 4px 16px rgba(249,115,22,0.15);
+      transform: translateY(-2px);
+    }
+    .route-from { font-size: 0.8rem; color: var(--muted); }
+    .route-arrow { color: var(--orange); font-size: 0.9rem; margin: 0.2rem 0; }
+    .route-to { font-size: 0.95rem; font-weight: 600; color: var(--navy); }
+    .route-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      background: #fff7ed;
+      color: var(--orange);
+      border-radius: 4px;
+      padding: 0.1rem 0.4rem;
+      margin-top: 0.4rem;
+      font-weight: 600;
+    }
+
+    /* FEATURES */
+    .features { background: var(--white); padding: 2.5rem 1.25rem; }
+    .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.25rem; }
+    .feature-item { display: flex; gap: 0.75rem; align-items: flex-start; }
+    .feature-icon {
+      width: 40px; height: 40px; min-width: 40px;
+      background: #fff7ed;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .feature-title { font-size: 0.85rem; font-weight: 600; color: var(--navy); margin-bottom: 0.2rem; }
+    .feature-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+
+    /* INFO STRIP */
+    .info-strip {
+      background: linear-gradient(135deg, #fff7ed, #fef3c7);
+      border-top: 3px solid var(--orange);
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+    }
+    .info-strip p { font-size: 0.85rem; color: var(--text); line-height: 1.7; }
+    .info-strip a { color: var(--orange); font-weight: 600; text-decoration: none; }
+
+    /* FOOTER */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 1.5rem 1.25rem;
+      font-size: 0.8rem;
+    }
+    footer a { color: var(--orange); text-decoration: none; }
+    footer .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">🚌 <span>Haryana</span>BusInfo</a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="routes.html">Routes</a>
+    <a href="live-tracking.html">Live</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">🇮🇳 Haryana Roadways — Free & Updated</div>
+  <h1>Bus Timings for <span>Every Route</span> in Haryana</h1>
+  <p>Search thousands of Haryana Roadways schedules instantly — departure times, via stops, and route numbers.</p>
+
+  <div class="search-card">
+    <h2>🔍 Search Bus Schedule</h2>
+
+    <div class="field-group">
+      <label class="field-label">From (Source Station)</label>
+      <span class="field-icon">📍</span>
+      <input type="text" id="from-input" placeholder="e.g. Sonipat" autocomplete="off" />
+      <div class="autocomplete-list" id="from-list"></div>
+    </div>
+
+    <button class="swap-btn" onclick="swapStations()" title="Swap stations">⇅</button>
+
+    <div class="field-group">
+      <label class="field-label">To (Destination Station)</label>
+      <span class="field-icon">🏁</span>
+      <input type="text" id="to-input" placeholder="e.g. Gohana" autocomplete="off" />
+      <div class="autocomplete-list" id="to-list"></div>
+    </div>
+
+    <button class="search-btn" onclick="searchBus()">🔍 Search Bus Timings</button>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">5,000+</div><div class="stat-label">Bus Routes</div></div>
+  <div class="stat"><div class="stat-num">22</div><div class="stat-label">Districts Covered</div></div>
+  <div class="stat"><div class="stat-num">500+</div><div class="stat-label">Bus Stands</div></div>
+  <div class="stat"><div class="stat-num">Free</div><div class="stat-label">Always</div></div>
+</div>
+
+<section class="section">
+  <div class="section-title">Popular Routes</div>
+  <div class="section-sub">Most searched bus routes in Haryana</div>
+  <div class="routes-grid" id="popular-routes"></div>
+</section>
+
+<section class="features">
+  <div class="section-title">Why Use Haryana Bus Info?</div>
+  <div class="section-sub">Built for Haryana commuters</div>
+  <div class="features-grid">
+    <div class="feature-item">
+      <div class="feature-icon">⏱️</div>
+      <div>
+        <div class="feature-title">Accurate Timings</div>
+        <div class="feature-desc">Up-to-date Haryana Roadways departure times, updated regularly</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🗺️</div>
+      <div>
+        <div class="feature-title">Via Stop Search</div>
+        <div class="feature-desc">Find buses passing through intermediate stations too</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">📱</div>
+      <div>
+        <div class="feature-title">Mobile Friendly</div>
+        <div class="feature-desc">Fast on any phone — even 2G connections</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🔄</div>
+      <div>
+        <div class="feature-title">Live Tracking</div>
+        <div class="feature-desc">Check approximate bus locations on key routes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="info-strip">
+  <p>
+    This is a companion resource for <a href="https://haryanabusinfo.in" target="_blank">haryanabusinfo.in</a> —
+    the complete Haryana Roadways timetable database.<br />
+    For full schedule search, route details, and operator info, visit the main site.
+  </p>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="routes.html">Routes</a>
+    <a href="live-tracking.html">Live Tracking</a>
+    <a href="about.html">About</a>
+    <a href="https://haryanabusinfo.in" target="_blank">Main Site ↗</a>
+  </div>
+  © 2025 HaryanaBusInfo.in — Free bus timetable for Haryana commuters
+</footer>
+
+<script>
+  const stations = [
+    "Chandigarh","Ambala","Ambala City","Hisar","Rohtak","Faridabad","Gurugram","Panipat",
+    "Karnal","Sonipat","Yamunanagar","Panchkula","Bhiwani","Sirsa","Jind","Kaithal",
+    "Rewari","Jhajjar","Palwal","Nuh","Fatehabad","Mahendragarh","Charkhi Dadri",
+    "Kurukshetra","Pehowa","Narwana","Gohana","Bahadurgarh","Ballabhgarh","Hansi",
+    "Tohana","Ratia","Ellenabad","Adampur","Narnaul","Sohna","Pataudi","Hodal",
+    "Hathin","Ferozpur Jhirka","Punhana","Taoru","Dharuhera","Kosli","Ateli",
+    "Nangal Chaudhary","Nizampur","Dadri","Loharu","Barwala","Uklana","Bhattu Kalan",
+    "Mandi Dabwali","Rania","Jakhal","Sangrur Road","Narwana","Assandh","Gharaunda",
+    "Taraori","Ladwa","Shahabad","Pipli","Ismailabad","Pinjore","Kalka","Morni Hills",
+    "Sohna","Palwal","Hathin","Hodal","Nuh","Ferozepur Jhirka","Indri","Nilokheri"
+  ];
+
+  const popularRoutes = [
+    {from:"Chandigarh",to:"Ambala"},{from:"Rohtak",to:"Delhi"},
+    {from:"Sonipat",to:"Gohana"},{from:"Hisar",to:"Sirsa"},
+    {from:"Karnal",to:"Kurukshetra"},{from:"Panipat",to:"Sonipat"},
+    {from:"Bhiwani",to:"Rohtak"},{from:"Faridabad",to:"Palwal"},
+    {from:"Jind",to:"Hisar"},{from:"Rewari",to:"Gurugram"},
+    {from:"Ambala",to:"Yamunanagar"},{from:"Kaithal",to:"Jind"}
+  ];
+
+  // Render popular routes
+  const grid = document.getElementById('popular-routes');
+  popularRoutes.forEach(r => {
+    const slug = `${slugify(r.from)}-to-${slugify(r.to)}`;
+    grid.innerHTML += `
+      <a class="route-card" href="https://haryanabusinfo.in/timetable/${slug}/" target="_blank">
+        <div class="route-from">${r.from}</div>
+        <div class="route-arrow">→</div>
+        <div class="route-to">${r.to}</div>
+        <span class="route-tag">View Schedule</span>
+      </a>`;
+  });
+
+  function slugify(str) {
+    return str.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  }
+
+  function setupAutocomplete(inputId, listId) {
+    const input = document.getElementById(inputId);
+    const list = document.getElementById(listId);
+    input.addEventListener('input', () => {
+      const val = input.value.toLowerCase().trim();
+      list.innerHTML = '';
+      if (!val) { list.classList.remove('open'); return; }
+      const matches = stations.filter(s => s.toLowerCase().includes(val)).slice(0, 8);
+      if (!matches.length) { list.classList.remove('open'); return; }
+      matches.forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-item';
+        item.innerHTML = `📍 ${m}`;
+        item.onclick = () => { input.value = m; list.classList.remove('open'); list.innerHTML = ''; };
+        list.appendChild(item);
+      });
+      list.classList.add('open');
+    });
+    document.addEventListener('click', e => {
+      if (!input.contains(e.target)) { list.classList.remove('open'); }
+    });
+  }
+
+  setupAutocomplete('from-input','from-list');
+  setupAutocomplete('to-input','to-list');
+
+  function swapStations() {
+    const f = document.getElementById('from-input');
+    const t = document.getElementById('to-input');
+    [f.value, t.value] = [t.value, f.value];
+  }
+
+  function searchBus() {
+    const from = document.getElementById('from-input').value.trim();
+    const to = document.getElementById('to-input').value.trim();
+    if (!from || !to) { alert('Please enter both source and destination stations.'); return; }
+    const url = `https://haryanabusinfo.in/timetable/${slugify(from)}-to-${slugify(to)}/`;
+    window.open(url, '_blank');
+  }
+</script>
+</body>
+</html>

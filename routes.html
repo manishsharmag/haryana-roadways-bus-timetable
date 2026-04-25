@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Haryana Bus Routes — All Routes Directory | Haryana Bus Info</title>
+  <meta name="description" content="Browse all Haryana Roadways bus routes by district. Find bus schedules from Rohtak, Hisar, Karnal, Ambala, Faridabad, Gurugram and all major Haryana cities." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0b1e3d; --navy2: #132952; --orange: #f97316;
+      --cream: #fef9f0; --text: #1e293b; --muted: #64748b;
+      --border: #e2e8f0; --white: #ffffff;
+    }
+    body { font-family: 'Noto Sans', sans-serif; background: var(--cream); color: var(--text); }
+
+    nav {
+      background: var(--navy); padding: 0 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .nav-logo { font-family: 'Baloo 2', cursive; font-size: 1.3rem; font-weight: 800; color: var(--white); text-decoration: none; }
+    .nav-logo span { color: var(--orange); }
+    .nav-links { display: flex; gap: 0.25rem; }
+    .nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem; font-weight: 500; padding: 0.4rem 0.75rem; border-radius: 6px; transition: all 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); background: rgba(255,255,255,0.12); }
+    .nav-links a.active { color: var(--orange); }
+
+    .page-hero {
+      background: linear-gradient(135deg, var(--navy), var(--navy2));
+      padding: 2.5rem 1.25rem 2rem; text-align: center;
+    }
+    .page-hero h1 { font-family: 'Baloo 2', cursive; font-size: 1.8rem; font-weight: 800; color: var(--white); margin-bottom: 0.5rem; }
+    .page-hero h1 span { color: var(--orange); }
+    .page-hero p { color: rgba(255,255,255,0.65); font-size: 0.9rem; }
+
+    /* SEARCH BAR */
+    .search-bar-wrap { padding: 1.25rem; background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 60px; z-index: 50; }
+    .search-bar {
+      display: flex; gap: 0.5rem;
+    }
+    .search-bar input {
+      flex: 1; padding: 0.7rem 1rem; border: 2px solid var(--border);
+      border-radius: 10px; font-size: 0.9rem; font-family: 'Noto Sans', sans-serif;
+      outline: none; transition: border 0.2s;
+    }
+    .search-bar input:focus { border-color: var(--orange); }
+    .search-bar button {
+      padding: 0.7rem 1rem; background: var(--orange); color: white;
+      border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.9rem;
+    }
+
+    /* DISTRICTS */
+    .section { padding: 1.75rem 1.25rem; }
+    .district-tabs {
+      display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem;
+      scrollbar-width: none; margin-bottom: 1.5rem;
+    }
+    .district-tabs::-webkit-scrollbar { display: none; }
+    .dtab {
+      white-space: nowrap; padding: 0.45rem 1rem;
+      border: 1.5px solid var(--border); border-radius: 20px;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer;
+      background: var(--white); color: var(--muted); transition: all 0.2s;
+      font-family: 'Noto Sans', sans-serif;
+    }
+    .dtab.active, .dtab:hover { border-color: var(--orange); background: #fff7ed; color: var(--orange); }
+
+    /* ROUTE LIST */
+    .routes-list { display: flex; flex-direction: column; gap: 0.65rem; }
+    .route-row {
+      background: var(--white); border-radius: 12px; padding: 0.9rem 1rem;
+      border: 1.5px solid var(--border); display: flex;
+      align-items: center; justify-content: space-between;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .route-row:hover { border-color: var(--orange); box-shadow: 0 3px 12px rgba(249,115,22,0.12); }
+    .route-left { flex: 1; }
+    .route-name { font-weight: 600; font-size: 0.9rem; color: var(--navy); }
+    .route-meta { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
+    .route-right { display: flex; align-items: center; gap: 0.5rem; }
+    .route-type {
+      font-size: 0.68rem; font-weight: 700; padding: 0.2rem 0.5rem;
+      border-radius: 4px; white-space: nowrap;
+    }
+    .type-express { background: #fef3c7; color: #92400e; }
+    .type-ordinary { background: #f0fdf4; color: #15803d; }
+    .type-volvo { background: #eff6ff; color: #1d4ed8; }
+    .route-arrow-icon { color: var(--orange); font-size: 1rem; }
+
+    /* LOAD MORE */
+    .load-more-btn {
+      width: 100%; padding: 0.85rem; background: var(--white);
+      border: 2px solid var(--orange); border-radius: 10px;
+      color: var(--orange); font-weight: 700; font-size: 0.9rem;
+      cursor: pointer; margin-top: 1rem; font-family: 'Baloo 2', cursive;
+      transition: all 0.2s;
+    }
+    .load-more-btn:hover { background: var(--orange); color: white; }
+
+    /* COUNT */
+    .result-count { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; }
+
+    footer {
+      background: var(--navy); color: rgba(255,255,255,0.6);
+      text-align: center; padding: 1.5rem 1.25rem; font-size: 0.8rem;
+      margin-top: 2rem;
+    }
+    footer a { color: var(--orange); text-decoration: none; }
+    footer .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">🚌 <span>Haryana</span>BusInfo</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="routes.html" class="active">Routes</a>
+    <a href="live-tracking.html">Live</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>Haryana Bus <span>Routes Directory</span></h1>
+  <p>Browse all Haryana Roadways routes by district or search by city name</p>
+</div>
+
+<div class="search-bar-wrap">
+  <div class="search-bar">
+    <input type="text" id="route-search" placeholder="Search city or route e.g. Rohtak, Hisar..." oninput="filterRoutes()" />
+    <button onclick="filterRoutes()">Go</button>
+  </div>
+</div>
+
+<section class="section">
+  <div class="district-tabs" id="dtabs">
+    <button class="dtab active" onclick="filterDistrict('all',this)">All Districts</button>
+    <button class="dtab" onclick="filterDistrict('rohtak',this)">Rohtak</button>
+    <button class="dtab" onclick="filterDistrict('hisar',this)">Hisar</button>
+    <button class="dtab" onclick="filterDistrict('karnal',this)">Karnal</button>
+    <button class="dtab" onclick="filterDistrict('ambala',this)">Ambala</button>
+    <button class="dtab" onclick="filterDistrict('faridabad',this)">Faridabad</button>
+    <button class="dtab" onclick="filterDistrict('gurugram',this)">Gurugram</button>
+    <button class="dtab" onclick="filterDistrict('sonipat',this)">Sonipat</button>
+    <button class="dtab" onclick="filterDistrict('panipat',this)">Panipat</button>
+    <button class="dtab" onclick="filterDistrict('jind',this)">Jind</button>
+    <button class="dtab" onclick="filterDistrict('bhiwani',this)">Bhiwani</button>
+  </div>
+
+  <div class="result-count" id="result-count">Showing all routes</div>
+  <div class="routes-list" id="routes-list"></div>
+  <button class="load-more-btn" id="load-more-btn" onclick="loadMore()">Load More Routes ↓</button>
+</section>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="routes.html">Routes</a>
+    <a href="live-tracking.html">Live Tracking</a>
+    <a href="about.html">About</a>
+    <a href="https://haryanabusinfo.in" target="_blank">Main Site ↗</a>
+  </div>
+  © 2025 HaryanaBusInfo.in — Free bus timetable for Haryana commuters
+</footer>
+
+<script>
+  const routes = [
+    {from:"Rohtak",to:"Delhi",via:"Bahadurgarh",type:"express",district:"rohtak"},
+    {from:"Rohtak",to:"Hisar",via:"Bhiwani",type:"ordinary",district:"rohtak"},
+    {from:"Rohtak",to:"Chandigarh",via:"Sonipat, Panipat, Karnal",type:"express",district:"rohtak"},
+    {from:"Rohtak",to:"Rewari",via:"Jhajjar",type:"ordinary",district:"rohtak"},
+    {from:"Rohtak",to:"Jind",via:"Julana",type:"ordinary",district:"rohtak"},
+    {from:"Hisar",to:"Delhi",via:"Rohtak",type:"express",district:"hisar"},
+    {from:"Hisar",to:"Sirsa",via:"Fatehabad",type:"ordinary",district:"hisar"},
+    {from:"Hisar",to:"Chandigarh",via:"Hansi, Jind, Kaithal",type:"express",district:"hisar"},
+    {from:"Hisar",to:"Bhiwani",via:"Hansi",type:"ordinary",district:"hisar"},
+    {from:"Hisar",to:"Jind",via:"Narwana",type:"ordinary",district:"hisar"},
+    {from:"Karnal",to:"Delhi",via:"Panipat, Sonipat",type:"express",district:"karnal"},
+    {from:"Karnal",to:"Chandigarh",via:"Kurukshetra, Pehowa",type:"express",district:"karnal"},
+    {from:"Karnal",to:"Ambala",via:"Kurukshetra",type:"ordinary",district:"karnal"},
+    {from:"Karnal",to:"Kaithal",via:"Assandh",type:"ordinary",district:"karnal"},
+    {from:"Ambala",to:"Delhi",via:"Panipat, Sonipat",type:"volvo",district:"ambala"},
+    {from:"Ambala",to:"Chandigarh",via:"Panchkula",type:"ordinary",district:"ambala"},
+    {from:"Ambala",to:"Yamunanagar",via:"Jagadhri",type:"ordinary",district:"ambala"},
+    {from:"Ambala City",to:"Kurukshetra",via:"Shahabad",type:"ordinary",district:"ambala"},
+    {from:"Faridabad",to:"Delhi",via:"Badarpur",type:"express",district:"faridabad"},
+    {from:"Faridabad",to:"Palwal",via:"Ballabhgarh",type:"ordinary",district:"faridabad"},
+    {from:"Faridabad",to:"Gurugram",via:"Sohna Road",type:"ordinary",district:"faridabad"},
+    {from:"Gurugram",to:"Delhi",via:"NH48",type:"express",district:"gurugram"},
+    {from:"Gurugram",to:"Rewari",via:"Pataudi",type:"ordinary",district:"gurugram"},
+    {from:"Gurugram",to:"Faridabad",via:"Sohna",type:"ordinary",district:"gurugram"},
+    {from:"Sonipat",to:"Delhi",via:"Kundli",type:"express",district:"sonipat"},
+    {from:"Sonipat",to:"Gohana",via:"Kharkhoda",type:"ordinary",district:"sonipat"},
+    {from:"Sonipat",to:"Panipat",via:"Ganaur",type:"ordinary",district:"sonipat"},
+    {from:"Sonipat",to:"Rohtak",via:"Bahadurgarh",type:"ordinary",district:"sonipat"},
+    {from:"Panipat",to:"Delhi",via:"Sonipat",type:"express",district:"panipat"},
+    {from:"Panipat",to:"Karnal",via:"Taraori",type:"ordinary",district:"panipat"},
+    {from:"Panipat",to:"Jind",via:"Assandh",type:"ordinary",district:"panipat"},
+    {from:"Jind",to:"Chandigarh",via:"Kaithal, Kurukshetra",type:"express",district:"jind"},
+    {from:"Jind",to:"Hisar",via:"Narwana",type:"ordinary",district:"jind"},
+    {from:"Jind",to:"Rohtak",via:"Julana",type:"ordinary",district:"jind"},
+    {from:"Bhiwani",to:"Delhi",via:"Rohtak",type:"express",district:"bhiwani"},
+    {from:"Bhiwani",to:"Hisar",via:"Hansi",type:"ordinary",district:"bhiwani"},
+    {from:"Bhiwani",to:"Charkhi Dadri",via:"Loharu",type:"ordinary",district:"bhiwani"},
+  ];
+
+  let filtered = [...routes];
+  let shown = 12;
+  let currentDistrict = 'all';
+
+  function slugify(str) {
+    return str.toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  }
+  function getTypeClass(t) {
+    return t === 'express' ? 'type-express' : t === 'volvo' ? 'type-volvo' : 'type-ordinary';
+  }
+  function getTypeLabel(t) {
+    return t === 'express' ? '⚡ Express' : t === 'volvo' ? '🏷️ Volvo' : '🚌 Ordinary';
+  }
+
+  function renderRoutes() {
+    const list = document.getElementById('routes-list');
+    const toShow = filtered.slice(0, shown);
+    list.innerHTML = toShow.map(r => `
+      <a class="route-row" href="https://haryanabusinfo.in/timetable/${slugify(r.from)}-to-${slugify(r.to)}/" target="_blank">
+        <div class="route-left">
+          <div class="route-name">${r.from} → ${r.to}</div>
+          <div class="route-meta">Via: ${r.via}</div>
+        </div>
+        <div class="route-right">
+          <span class="route-type ${getTypeClass(r.type)}">${getTypeLabel(r.type)}</span>
+          <span class="route-arrow-icon">→</span>
+        </div>
+      </a>`).join('');
+    document.getElementById('result-count').textContent = `Showing ${toShow.length} of ${filtered.length} routes`;
+    document.getElementById('load-more-btn').style.display = shown >= filtered.length ? 'none' : 'block';
+  }
+
+  function filterDistrict(district, el) {
+    currentDistrict = district;
+    document.querySelectorAll('.dtab').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    applyFilters();
+  }
+
+  function filterRoutes() { applyFilters(); }
+
+  function applyFilters() {
+    const q = document.getElementById('route-search').value.toLowerCase().trim();
+    filtered = routes.filter(r => {
+      const matchDistrict = currentDistrict === 'all' || r.district === currentDistrict;
+      const matchSearch = !q || r.from.toLowerCase().includes(q) || r.to.toLowerCase().includes(q) || r.via.toLowerCase().includes(q);
+      return matchDistrict && matchSearch;
+    });
+    shown = 12;
+    renderRoutes();
+  }
+
+  function loadMore() { shown += 12; renderRoutes(); }
+
+  renderRoutes();
+</script>
+</body>
+</html>

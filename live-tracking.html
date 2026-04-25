@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Bus Tracking — Haryana Roadways | Haryana Bus Info</title>
+  <meta name="description" content="Track Haryana Roadways buses live. Check current bus status, expected arrival time, and route progress for Haryana state buses." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0b1e3d; --navy2: #132952; --orange: #f97316;
+      --orange2: #fb923c; --gold: #fbbf24; --cream: #fef9f0;
+      --text: #1e293b; --muted: #64748b; --border: #e2e8f0; --white: #ffffff;
+      --green: #22c55e; --red: #ef4444; --yellow: #eab308;
+    }
+    body { font-family: 'Noto Sans', sans-serif; background: var(--cream); color: var(--text); }
+
+    nav {
+      background: var(--navy); padding: 0 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .nav-logo { font-family: 'Baloo 2', cursive; font-size: 1.3rem; font-weight: 800; color: var(--white); text-decoration: none; }
+    .nav-logo span { color: var(--orange); }
+    .nav-links { display: flex; gap: 0.25rem; }
+    .nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem; font-weight: 500; padding: 0.4rem 0.75rem; border-radius: 6px; transition: all 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); background: rgba(255,255,255,0.12); }
+    .nav-links a.active { color: var(--orange); }
+
+    .page-hero {
+      background: linear-gradient(135deg, var(--navy), var(--navy2));
+      padding: 2.5rem 1.25rem 2rem;
+      text-align: center;
+    }
+    .live-dot {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.4);
+      color: var(--green); font-size: 0.75rem; font-weight: 600;
+      padding: 0.3rem 0.85rem; border-radius: 20px; margin-bottom: 1rem;
+    }
+    .live-dot::before {
+      content: ''; width: 8px; height: 8px; background: var(--green);
+      border-radius: 50%; animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+    .page-hero h1 { font-family: 'Baloo 2', cursive; font-size: 1.8rem; font-weight: 800; color: var(--white); margin-bottom: 0.5rem; }
+    .page-hero h1 span { color: var(--orange); }
+    .page-hero p { color: rgba(255,255,255,0.65); font-size: 0.9rem; max-width: 420px; margin: 0 auto; }
+
+    .section { padding: 2rem 1.25rem; }
+    .section-title { font-family: 'Baloo 2', cursive; font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem; }
+    .section-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.25rem; }
+
+    /* TRACK FORM */
+    .track-card {
+      background: var(--white); border-radius: 16px; padding: 1.5rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08); margin-bottom: 2rem;
+    }
+    .track-card h2 { font-family: 'Baloo 2', cursive; font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; }
+    .track-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; }
+    .tab-btn {
+      flex: 1; padding: 0.6rem; border: 2px solid var(--border);
+      background: #f8fafc; border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+      color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: 'Noto Sans', sans-serif;
+    }
+    .tab-btn.active { border-color: var(--orange); background: #fff7ed; color: var(--orange); }
+    .input-row { display: flex; gap: 0.5rem; }
+    .track-input {
+      flex: 1; padding: 0.75rem 1rem; border: 2px solid var(--border);
+      border-radius: 10px; font-size: 0.9rem; font-family: 'Noto Sans', sans-serif;
+      outline: none; transition: border 0.2s; background: #f8fafc;
+    }
+    .track-input:focus { border-color: var(--orange); background: var(--white); }
+    .track-btn {
+      padding: 0.75rem 1.25rem; background: var(--orange);
+      color: white; border: none; border-radius: 10px; font-weight: 700;
+      font-size: 0.9rem; cursor: pointer; white-space: nowrap; font-family: 'Baloo 2', cursive;
+    }
+
+    /* STATUS RESULT */
+    .status-box {
+      background: var(--white); border-radius: 14px; padding: 1.25rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07); margin-bottom: 1.5rem;
+      border-left: 4px solid var(--orange); display: none;
+    }
+    .status-box.show { display: block; }
+    .status-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+    .route-num { font-family: 'Baloo 2', cursive; font-size: 1.2rem; font-weight: 800; color: var(--navy); }
+    .status-badge { padding: 0.3rem 0.7rem; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+    .badge-green { background: rgba(34,197,94,0.15); color: var(--green); }
+    .badge-yellow { background: rgba(234,179,8,0.15); color: var(--yellow); }
+    .badge-red { background: rgba(239,68,68,0.15); color: var(--red); }
+
+    /* PROGRESS BAR */
+    .route-progress { margin: 1rem 0; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; }
+    .progress-track { height: 8px; background: #e2e8f0; border-radius: 99px; position: relative; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--orange), var(--gold)); border-radius: 99px; position: relative; transition: width 1s ease; }
+    .progress-bus {
+      position: absolute; right: -10px; top: -8px;
+      font-size: 1.1rem; animation: busMove 2s ease-in-out infinite alternate;
+    }
+    @keyframes busMove { from{transform:translateX(-2px)} to{transform:translateX(2px)} }
+    .stops-list { display: flex; flex-direction: column; gap: 0; margin-top: 1rem; }
+    .stop-item {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.5rem 0; position: relative;
+    }
+    .stop-item:not(:last-child)::before {
+      content: ''; position: absolute;
+      left: 9px; top: 22px; width: 2px; height: calc(100% - 8px);
+      background: var(--border);
+    }
+    .stop-dot {
+      width: 20px; height: 20px; border-radius: 50%; min-width: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; position: relative; z-index: 1;
+    }
+    .stop-dot.done { background: var(--orange); color: white; }
+    .stop-dot.current { background: var(--green); color: white; animation: pulse 1.5s infinite; }
+    .stop-dot.pending { background: var(--border); color: var(--muted); }
+    .stop-name { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+    .stop-time { font-size: 0.75rem; color: var(--muted); }
+    .stop-current-tag { font-size: 0.7rem; color: var(--green); font-weight: 600; }
+
+    /* HOW IT WORKS */
+    .how-card { background: var(--white); border-radius: 14px; padding: 1.25rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .steps { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+    .step { display: flex; gap: 0.75rem; align-items: flex-start; }
+    .step-num {
+      width: 32px; height: 32px; min-width: 32px;
+      background: var(--orange); color: white;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 0.9rem;
+    }
+    .step-title { font-size: 0.9rem; font-weight: 600; color: var(--navy); margin-bottom: 0.2rem; }
+    .step-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+    /* DISCLAIMER */
+    .disclaimer {
+      background: #fffbeb; border: 1px solid #fde68a;
+      border-radius: 10px; padding: 1rem 1.25rem; margin: 1.5rem 0;
+      font-size: 0.8rem; color: #92400e; line-height: 1.6;
+    }
+    .disclaimer strong { color: #78350f; }
+
+    footer {
+      background: var(--navy); color: rgba(255,255,255,0.6);
+      text-align: center; padding: 1.5rem 1.25rem; font-size: 0.8rem;
+    }
+    footer a { color: var(--orange); text-decoration: none; }
+    footer .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">🚌 <span>Haryana</span>BusInfo</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="routes.html">Routes</a>
+    <a href="live-tracking.html" class="active">Live</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="live-dot">Live Tracking Active</div>
+  <h1>Track Your <span>Bus Live</span></h1>
+  <p>Check the current status and estimated arrival of Haryana Roadways buses on key routes.</p>
+</div>
+
+<section class="section">
+
+  <div class="track-card">
+    <h2>🚌 Track a Bus</h2>
+    <div class="track-tabs">
+      <button class="tab-btn active" onclick="setTab(this,'route')">By Route Number</button>
+      <button class="tab-btn" onclick="setTab(this,'station')">By Station</button>
+    </div>
+    <div class="input-row">
+      <input class="track-input" id="track-input" placeholder="Enter route number e.g. 36A" />
+      <button class="track-btn" onclick="trackBus()">Track 🔍</button>
+    </div>
+  </div>
+
+  <!-- Demo Status Box -->
+  <div class="status-box show" id="status-box">
+    <div class="status-header">
+      <div>
+        <div class="route-num">Route 36A</div>
+        <div style="font-size:0.8rem;color:var(--muted)">Rohtak → Sonipat → Panipat</div>
+      </div>
+      <span class="status-badge badge-green">🟢 On Time</span>
+    </div>
+
+    <div class="route-progress">
+      <div class="progress-label"><span>Rohtak</span><span>Panipat</span></div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:55%">
+          <span class="progress-bus">🚌</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:1rem;margin:0.75rem 0;flex-wrap:wrap">
+      <div style="flex:1;background:#f8fafc;border-radius:8px;padding:0.6rem 0.75rem;text-align:center">
+        <div style="font-size:0.7rem;color:var(--muted)">Current Location</div>
+        <div style="font-weight:700;font-size:0.9rem;color:var(--navy)">Near Gohana</div>
+      </div>
+      <div style="flex:1;background:#f8fafc;border-radius:8px;padding:0.6rem 0.75rem;text-align:center">
+        <div style="font-size:0.7rem;color:var(--muted)">Est. Arrival Panipat</div>
+        <div style="font-weight:700;font-size:0.9rem;color:var(--green)">~14:35</div>
+      </div>
+      <div style="flex:1;background:#f8fafc;border-radius:8px;padding:0.6rem 0.75rem;text-align:center">
+        <div style="font-size:0.7rem;color:var(--muted)">Last Updated</div>
+        <div style="font-weight:700;font-size:0.9rem;color:var(--navy)" id="last-update">Just now</div>
+      </div>
+    </div>
+
+    <div class="stops-list">
+      <div class="stop-item">
+        <div class="stop-dot done">✓</div>
+        <div><div class="stop-name">Rohtak Bus Stand</div><div class="stop-time">Departed 12:00</div></div>
+      </div>
+      <div class="stop-item">
+        <div class="stop-dot done">✓</div>
+        <div><div class="stop-name">Bahadurgarh</div><div class="stop-time">Passed 12:28</div></div>
+      </div>
+      <div class="stop-item">
+        <div class="stop-dot done">✓</div>
+        <div><div class="stop-name">Sonipat</div><div class="stop-time">Passed 13:10</div></div>
+      </div>
+      <div class="stop-item">
+        <div class="stop-dot current">●</div>
+        <div>
+          <div class="stop-name">Gohana</div>
+          <div class="stop-current-tag">🟢 Bus is here now</div>
+        </div>
+      </div>
+      <div class="stop-item">
+        <div class="stop-dot pending">○</div>
+        <div><div class="stop-name">Khanpur Kalan</div><div class="stop-time">Est. 14:10</div></div>
+      </div>
+      <div class="stop-item">
+        <div class="stop-dot pending">○</div>
+        <div><div class="stop-name">Panipat Bus Stand</div><div class="stop-time">Est. 14:35</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>⚠️ Note:</strong> Live tracking is based on approximate GPS data from Haryana Roadways systems. Timings shown are estimates and may vary due to traffic, road conditions, or operational changes. For scheduled timings, use the <a href="https://haryanabusinfo.in" target="_blank" style="color:#b45309">timetable search on the main site</a>.
+  </div>
+
+  <div class="how-card">
+    <div class="section-title">How Live Tracking Works</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div><div class="step-title">Enter Route or Station</div><div class="step-desc">Type your bus route number or the station you're waiting at</div></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div><div class="step-title">We Fetch GPS Data</div><div class="step-desc">Our system pulls the latest position data from Haryana Roadways GPS fleet</div></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div><div class="step-title">See Bus Location</div><div class="step-desc">View the bus on its route with estimated arrival at upcoming stops</div></div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div><div class="step-title">Plan Your Journey</div><div class="step-desc">Know exactly when to leave home — no more waiting at the bus stand</div></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="routes.html">Routes</a>
+    <a href="live-tracking.html">Live Tracking</a>
+    <a href="about.html">About</a>
+    <a href="https://haryanabusinfo.in" target="_blank">Main Site ↗</a>
+  </div>
+  © 2025 HaryanaBusInfo.in — Free bus timetable for Haryana commuters
+</footer>
+
+<script>
+  function setTab(el, type) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    const input = document.getElementById('track-input');
+    input.placeholder = type === 'route' ? 'Enter route number e.g. 36A' : 'Enter station name e.g. Sonipat';
+  }
+
+  function trackBus() {
+    const val = document.getElementById('track-input').value.trim();
+    if (!val) { alert('Please enter a route number or station name.'); return; }
+    document.getElementById('status-box').classList.add('show');
+    document.getElementById('last-update').textContent = 'Just now';
+    window.open('https://haryanabusinfo.in', '_blank');
+  }
+
+  // Update "last updated" time
+  let secs = 0;
+  setInterval(() => {
+    secs += 30;
+    const el = document.getElementById('last-update');
+    if (el) el.textContent = secs < 60 ? `${secs}s ago` : `${Math.floor(secs/60)}m ago`;
+  }, 30000);
+</script>
+</body>
+</html>
