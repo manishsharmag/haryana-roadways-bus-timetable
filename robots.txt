@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://haryanabusinfo.pages.dev/sitemap.xml
+
+# Haryana Bus Info - haryanabusinfo.pages.dev
+# Full timetable available at https://haryanabusinfo.in
